@@ -1,10 +1,5 @@
 let searchalg = 0;
 
-function setAlg(algId){
-  searchalg = algId;
-  console.log("Chosen Algorithm: BFS");
-}
-
 function setup() {
     createCanvas(400, 400);
     map = new MAP();
@@ -13,11 +8,50 @@ function setup() {
 }
 
 function startMenu(){
-  fill("black");
+  background("grey");
   textSize(30);
   textAlign(CENTER);
-  text("Metodo de Busca:", 100,0,300,100);
+  text("Search Algorithm:", 50,50,300,100);
   
+  bfsButton = createButton("BFS");
+  bfsButton.position(180,100);
+  
+  dfsButton = createButton("DFS");
+  dfsButton.position(180,150);
+  
+  gsButton = createButton("Greedy Search");
+  gsButton.position(150,200);
+  
+  ucsButton = createButton("Uniform Cost Search");
+  ucsButton.position(135,250);
+  
+  axsButton = createButton("A* Search");
+  axsButton.position(165,300);
+  
+  bfsButton.mousePressed(setAlgToBFS);
+  dfsButton.mousePressed(setAlgToDFS);
+  gsButton.mousePressed(setAlgToGS);
+  ucsButton.mousePressed(setAlgToUCS);
+  axsButton.mousePressed(setAlgToAXS);
+  
+  delete(bfsButton);
+  
+}
+
+function setAlgToBFS(){
+  searchalg = 1;
+}
+function setAlgToDFS(){
+  searchalg = 2;
+}
+function setAlgToGS(){
+  searchalg = 3;
+}
+function setAlgToUCS(){
+  searchalg = 4;
+}
+function setAlgToAXS(){
+  searchalg = 5;
 }
 
 function draw() {
@@ -37,6 +71,8 @@ function draw() {
       case 3:
         break;
       case 4:
+        break;
+      case 5:
         break;
       default:
         break;

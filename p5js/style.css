@@ -6,3 +6,12 @@ html, body {
     display: block;
   }
   
+  button {
+    background-color: white;
+    border-radius: 10px;
+  }
+  
+  button:hover {
+    background-color: gray;
+  }
+  
