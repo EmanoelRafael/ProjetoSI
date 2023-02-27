@@ -370,9 +370,23 @@ class MAP{
             //noStroke();
             rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
           }else if(this.array[i][j][1] == "path"){
-            fill("rgb(255,255,255)");
-            //noStroke();
-            rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);          
+            if(this.array[i][j][0] < 0.1){
+              fill("black");
+              //noStroke();
+              rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            }else if(this.array[i][j][0] < 0.30){
+              fill("rgb(3,198,3)");
+              //noStroke();
+              rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            }else if(this.array[i][j][0] < 0.40){
+              fill("rgb(201,59,59)");
+              //noStroke();
+              rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            }else{
+              fill("rgb(15,194,255)");
+              //noStroke();
+              rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            }       
           }else if(this.array[i][j][1] == "food"){
             fill("pink");
             //noStroke();
