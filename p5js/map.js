@@ -357,7 +357,11 @@ class MAP{
       }
       
     }
-  
+    
+    ucs() {
+      
+    }
+    
     show(){
       for(let i = 0; i < this.width; i++){
         for(let j = 0; j < this.height; j++){
@@ -366,7 +370,7 @@ class MAP{
             //noStroke();
             rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
           }else if(this.array[i][j][1] == "path"){
-            fill("lime");
+            fill("rgb(255,255,255)");
             //noStroke();
             rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);          
           }else if(this.array[i][j][1] == "food"){
@@ -378,23 +382,40 @@ class MAP{
             //noStroke();
             rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
           }else if(this.array[i][j][1] == "visited"){
-            fill("purple");
+            if(this.array[i][j][0] < 0.1){
+              fill("black");
+              //noStroke();
+              rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            }else if(this.array[i][j][0] < 0.30){
+              fill("rgb(1,94,1)");
+              //noStroke();
+              rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            }else if(this.array[i][j][0] < 0.40){
+              fill("rgb(101,26,26)");
+              //noStroke();
+              rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            }else{
+              fill("rgb(4,4,126)");
+              //noStroke();
+              rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            }
+            //fill("purple");
             //noStroke();
-            rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            //rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
           }else if(this.array[i][j][0] < 0.1 && this.array[i][j][1] == "unvisited"){
-            fill("gray");
+            fill("black");
             //noStroke();
             rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
           }else if(this.array[i][j][0] < 0.30 && this.array[i][j][1] == "unvisited"){
-            fill("green");
+            fill("rgb(3,198,3)");
             //noStroke();
             rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
           }else if(this.array[i][j][0] < 0.40 && this.array[i][j][1] == "unvisited"){
-            fill("brown");
+            fill("rgb(201,59,59)");
             //noStroke();
             rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
           }else if (this.array[i][j][0] > 0.4 && this.array[i][j][1] == "unvisited"){
-            fill("blue");
+            fill("rgb(15,194,255)");
             //noStroke();
             rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
           }
