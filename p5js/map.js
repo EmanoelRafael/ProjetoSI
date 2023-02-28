@@ -31,9 +31,15 @@ class MAP{
       this.already_visited = [];
       this.path = [];
       this.nodeaux = 0;
+      this.greedyBFSStructure = null;
+      this.playerX = -1;
+      this.playerY = -1;
+      this.foodX = -1;
+      this.foodY = -1;
       this.nodeaux2 = 0;
       this.leaves = [];
       this.nodesAux = [];
+
     }
     
     grid(){
@@ -63,6 +69,8 @@ class MAP{
         }
       }
       this.array[i][j][1] = "player";
+      this.playerX = i;
+      this.playerY = j;
     }
     
     setFood(){
@@ -79,6 +87,8 @@ class MAP{
         }
       }
       this.array[i][j][1] = "food";
+      this.foodX = i;
+      this.foodY = j;
     }
     
     node(){
@@ -501,6 +511,128 @@ class MAP{
       }      
 
     }
+
+    greedyBFS(){
+      // console.log(search);
+      if (this.greedyBFSStructure === null) {
+        let first = {x: this.playerX, y: this.playerY, cost: 0, parent: null};
+        this.greedyBFSStructure = {
+          current: first,
+          queue: [first],
+          path: [],
+          foodFound: false
+        }
+        
+
+      } else {
+        if(this.greedyBFSStructure.foodFound){
+          // console.log('comida encontrada');
+          if(this.greedyBFSStructure.current.parent != null){
+            let current = this.greedyBFSStructure.current;
+            this.array[current.x][current.y][1] = "path";
+            this.greedyBFSStructure.current = current.parent;
+          }
+        } else {
+          if(this.greedyBFSStructure.queue.length > 0){
+            this.greedyBFSStructure.queue.sort((a, b) => b.cost - a.cost);
+            this.greedyBFSStructure.current = this.greedyBFSStructure.queue.pop();
+            // this.greedyBFSStructure.path.push({...this.greedyBFSStructure.current});
+            
+            let current = this.greedyBFSStructure.current;
+            this.visited(current.x, current.y);
+      
+            let xLeft = current.x - 1;
+            let xRight = current.x + 1;
+            let yUp = current.y - 1;
+            let yDown = current.y + 1;
+      
+            //this.array[i][j][0] < 0.1 && this.array[i][j][1] == "unvisited"
+            // console.log(xLeft, this.array[xLeft][current.y][1],this.array[xLeft][current.y][0]);
+            if(xLeft >= 0){
+              if(this.array[xLeft][current.y][1] != "food"){
+                if(this.array[xLeft][current.y][1] != "visited" && this.array[xLeft][current.y][0] >= 0.1){
+                  this.fronteira(xLeft, current.y);
+                  let son = {x: xLeft, y: current.y, cost: this.heuristic(xLeft, current.y), parent: current};
+                  // console.log(son);
+                  this.greedyBFSStructure.queue.push(son);
+                }
+              } else {
+                this.greedyBFSStructure.foodFound = true;
+              }
+            }
+  
+            if(xRight < this.width){
+              if(this.array[xRight][current.y][1] != "food"){
+                if(this.array[xRight][current.y][1] != "visited" && this.array[xRight][current.y][0] >= 0.1){
+                  this.fronteira(xRight, current.y);
+                  let son = {x: xRight, y: current.y, cost: this.heuristic(xRight, current.y), parent: current};
+                  // console.log(son);
+                  this.greedyBFSStructure.queue.push(son);
+                }
+              } else {
+                this.greedyBFSStructure.foodFound = true;
+              }
+            }
+  
+            if(yUp >= 0){
+              if(this.array[current.x][yUp][1] != "food"){
+                if(this.array[current.x][yUp][1] != "visited" && this.array[current.x][yUp][0] >= 0.1){
+                  this.fronteira(current.x, yUp);
+                  let son = {x: current.x, y: yUp, cost: this.heuristic(current.x, yUp), parent: current};
+                  // console.log(son);
+                  this.greedyBFSStructure.queue.push(son);
+                }
+              } else {
+                this.greedyBFSStructure.foodFound = true;
+              }
+            }
+  
+            if(yDown < this.height){
+              if(this.array[current.x][yDown][1] != "food"){
+                if(this.array[current.x][yDown][1] != "visited" && this.array[current.x][yDown][0] >= 0.1){
+                  this.fronteira(current.x, yDown);
+                  let son = {x: current.x, y: yDown, cost: this.heuristic(current.x, yDown), parent: current};
+                  // console.log(son);
+                  this.greedyBFSStructure.queue.push(son);
+                }
+              } else {
+                this.greedyBFSStructure.foodFound = true;
+              }
+            }
+  
+          } else {
+            console.log('fila vazia: CAMINHO NÃO ENCONTRADO');
+          }
+        }
+      }
+    
+    }
+    
+
+    // heuristica: custo do terreno
+    // heuristic(x,y){
+    //   if(this.array[x][y][0] < 0.1){
+    //     return 100;
+    //   } else if(this.array[x][y][0] < 0.3){
+    //     return 1;
+    //   } else if(this.array[x][y][0] < 0.4){
+    //     return 5;
+    //   } else {
+    //     return 10;
+    //   }
+    // }
+
+    // heuristica: distância em linha reta entre o player e a comida
+    heuristic(x, y) {
+      if(this.array[x][y][0] < 0.1){
+        return 100;
+      } else {
+        let d = abs(x - this.foodX) + abs(y - this.foodY);
+        // console.log(d);
+        return d;
+      }
+    }
+ 
     
     ucs() {
       if (this.timer > 0) {
@@ -554,6 +686,7 @@ class MAP{
       }
     }
     
+
     show(){
       for(let i = 0; i < this.width; i++){
         for(let j = 0; j < this.height; j++){
@@ -629,6 +762,19 @@ class MAP{
         }
       }
     }
+
+    visited(x, y){
+      if(this.array[x][y][1] != "player"){
+        this.array[x][y][1] = "visited";
+      }
+    }
+
+    fronteira(x, y){
+      if(this.array[x][y][1] != "player"){
+        this.array[x][y][1] = "frontier";
+      }
+    }
+
   }
   
   
