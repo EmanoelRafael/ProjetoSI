@@ -673,16 +673,16 @@ class MAP{
 
             this.cordx = this.nodes[this.current][0];
             this.cordy = this.nodes[this.current][1];
-            this.array[this.cordx][this.cordy][1] = 'visited';
+            if(this.array[this.cordx][this.cordy][1] != 'player')this.array[this.cordx][this.cordy][1] = 'visited';
 
             for (let i = 0; i < this.width*this.height; i++) {
                 
                 if (this.matrix[this.current][i] < 50) {
                   this.cordx = this.nodes[i][0];
                   this.cordy = this.nodes[i][1];
-                  if(this.array[this.cordx][this.cordy][1] != 'visited' && this.array[this.cordx][this.cordy][1] != 'player'){
+                  if(this.array[this.cordx][this.cordy][1] != 'visited' && this.array[this.cordx][this.cordy][1] != 'frontier'){
                     append(this.leaves,i);
-                    this.array[this.cordx][this.cordy][1] = 'frontier'
+                    if(this.array[this.cordx][this.cordy][1] != 'player')this.array[this.cordx][this.cordy][1] = 'frontier'
                     this.nodesAux[i][0] = this.nodesAux[this.current][0] + this.matrix[this.current][i]; //Atualizando o peso
                     this.nodesAux[i][1] = this.current; // Atualizando o pai
                   };
@@ -696,7 +696,7 @@ class MAP{
             this.current = this.nodesAux[this.current][1];
             this.cordx = this.nodes[this.current][0];
             this.cordy = this.nodes[this.current][1];
-            this.array[this.cordx][this.cordy][1] = 'path';
+            if(this.array[this.cordx][this.cordy][1] != 'player')this.array[this.cordx][this.cordy][1] = 'path';
           }
       }
     }
