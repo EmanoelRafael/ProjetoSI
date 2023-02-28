@@ -520,7 +520,7 @@ class MAP{
           current: first,
           queue: [first],
           path: [],
-          foodFound: false
+          foodFound: false,
         }
         
 
@@ -531,6 +531,16 @@ class MAP{
             let current = this.greedyBFSStructure.current;
             this.array[current.x][current.y][1] = "path";
             this.greedyBFSStructure.current = current.parent;
+            this.greedyBFSStructure.path.push([current.x, current.y]);
+          } else {
+            if(this.greedyBFSStructure.path.length > 0){
+              let [nextStepX, nextStepY] = this.greedyBFSStructure.path.pop()
+              console.log(nextStepX,nextStepY);
+              this.array[this.playerX][this.playerY][1] = 'path';
+              this.array[nextStepX][nextStepY][1] = 'player';
+              this.playerX = nextStepX;
+              this.playerY = nextStepY;
+            }
           }
         } else {
           if(this.greedyBFSStructure.queue.length > 0){
@@ -610,28 +620,28 @@ class MAP{
     
 
     // heuristica: custo do terreno
-    // heuristic(x,y){
-    //   if(this.array[x][y][0] < 0.1){
-    //     return 100;
-    //   } else if(this.array[x][y][0] < 0.3){
-    //     return 1;
-    //   } else if(this.array[x][y][0] < 0.4){
-    //     return 5;
-    //   } else {
-    //     return 10;
-    //   }
-    // }
-
-    // heuristica: distância em linha reta entre o player e a comida
-    heuristic(x, y) {
+    heuristic(x,y){
       if(this.array[x][y][0] < 0.1){
         return 100;
+      } else if(this.array[x][y][0] < 0.3){
+        return 1;
+      } else if(this.array[x][y][0] < 0.4){
+        return 5;
       } else {
-        let d = abs(x - this.foodX) + abs(y - this.foodY);
-        // console.log(d);
-        return d;
+        return 10;
       }
     }
+
+    // heuristica: distância em linha reta entre o player e a comida
+    // heuristic(x, y) {
+    //   if(this.array[x][y][0] < 0.1){
+    //     return 100;
+    //   } else {
+    //     let d = abs(x - this.foodX) + abs(y - this.foodY);
+    //     // console.log(d);
+    //     return d;
+    //   }
+    // }
  
     
     ucs() {
@@ -695,6 +705,7 @@ class MAP{
             //noStroke();
             rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
           }else if(this.array[i][j][1] == "path"){
+            stroke("yellow");
             if(this.array[i][j][0] < 0.1){
               fill("black");
               //noStroke();
@@ -711,7 +722,8 @@ class MAP{
               fill("rgb(15,194,255)");
               //noStroke();
               rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
-            }       
+            }
+            stroke('black');       
           }else if(this.array[i][j][1] == "food"){
             fill("pink");
             //noStroke();
