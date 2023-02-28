@@ -32,6 +32,8 @@ class MAP{
       this.path = [];
       this.nodeaux = 0;
       this.nodeaux2 = 0;
+      this.leaves = [];
+      this.nodesAux = [];
     }
     
     grid(){
@@ -84,6 +86,7 @@ class MAP{
       for(let i = 0; i < this.width; i++){
         for(let j = 0; j < this.height; j++){
           append(this.nodes,[i,j]);
+          append(this.nodesAux, [-1,-1]);
         }
       }
       //print(this.nodes)
@@ -178,6 +181,9 @@ class MAP{
                 this.cordx = this.nodes[j][0];
                 this.cordy = this.nodes[j][1];
                 this.array[this.cordx][this.cordy][1] = "frontier";
+                this.nodesAux[j][0] = this.weight; //Peso
+                this.nodesAux[j][1] = this.current; //Pai
+                this.leaves.push(j);
             }
         }
     }
@@ -497,7 +503,55 @@ class MAP{
     }
     
     ucs() {
-      
+      if (this.timer > 0) {
+
+        this.timer --;
+
+      }else if (this.timer == 0 && this.flag == true) {
+          
+          let idMinPath = 0;
+          for (let i = 0; i < this.leaves.length; i++) {
+              if (this.nodesAux[this.leaves[i]][0] < this.nodesAux[this.leaves[idMinPath]][0]) {
+                  idMinPath = i;
+              }
+          }
+
+          this.current = this.leaves.splice(idMinPath,1)[0]; // Retirando o minimo do vetor de folhas
+
+          if (this.current == this.target) {
+              this.flag = false;
+          }
+
+          if (this.flag) {
+
+            this.cordx = this.nodes[this.current][0];
+            this.cordy = this.nodes[this.current][1];
+            this.array[this.cordx][this.cordy][1] = 'visited';
+
+            for (let i = 0; i < this.width*this.height; i++) {
+                
+                if (this.matrix[this.current][i] < 50) {
+                  this.cordx = this.nodes[i][0];
+                  this.cordy = this.nodes[i][1];
+                  if(this.array[this.cordx][this.cordy][1] != 'visited'){
+                    append(this.leaves,i);
+                    this.array[this.cordx][this.cordy][1] = 'frontier'
+                    this.nodesAux[i][0] = this.nodesAux[this.current][0] + this.matrix[this.current][i]; //Atualizando o peso
+                    this.nodesAux[i][1] = this.current; // Atualizando o pai
+                  };
+                }
+            }
+        }
+      } 
+
+      if (this.flag == false) {
+          while(this.current != this.source){
+            this.current = this.nodesAux[this.current][1];
+            this.cordx = this.nodes[this.current][0];
+            this.cordy = this.nodes[this.current][1];
+            this.array[this.cordx][this.cordy][1] = 'path';
+          }
+      }
     }
     
     show(){
