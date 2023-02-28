@@ -78,6 +78,7 @@ function setSearch(){
     }
     
     searchChoosed = true;
+    deleteButtons();
     
   } 
 
@@ -137,6 +138,8 @@ function draw() {
         map.show();
         break;
       case 4:
+        map.ucs();
+        map.show();
         break;
       case 5:
         break;
