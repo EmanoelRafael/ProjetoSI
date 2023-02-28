@@ -12,9 +12,12 @@ class MAP{
       this.timer = 1;
       this.current = 0;
       this.weight = 0;
+      this.weight2 = 0;
       this.idx = 0;
       this.cordx = 0;
       this.cordy = 0;
+      this.cordx2 = 0;
+      this.cordy2 = 0;
       this.sourceidx = [];
       this.targetidx = [];
       this.source = 0;
@@ -23,15 +26,20 @@ class MAP{
       this.not_in_came_from = true;
       this.frontier = [];
       this.flag = true;
+      this.flag2 = false;
+      this.flag3 = false;
       this.already_visited = [];
       this.path = [];
       this.nodeaux = 0;
-
       this.greedyBFSStructure = null;
       this.playerX = -1;
       this.playerY = -1;
       this.foodX = -1;
       this.foodY = -1;
+      this.nodeaux2 = 0;
+      this.leaves = [];
+      this.nodesAux = [];
+
     }
     
     grid(){
@@ -88,6 +96,7 @@ class MAP{
       for(let i = 0; i < this.width; i++){
         for(let j = 0; j < this.height; j++){
           append(this.nodes,[i,j]);
+          append(this.nodesAux, [-1,-1]);
         }
       }
       //print(this.nodes)
@@ -182,6 +191,9 @@ class MAP{
                 this.cordx = this.nodes[j][0];
                 this.cordy = this.nodes[j][1];
                 this.array[this.cordx][this.cordy][1] = "frontier";
+                this.nodesAux[j][0] = this.weight; //Peso
+                this.nodesAux[j][1] = this.current; //Pai
+                this.leaves.push(j);
             }
         }
     }
@@ -198,6 +210,7 @@ class MAP{
 
           if(this.current == this.target){
               this.flag = false;
+              this.flag2 = true;
           }
 
           if(this.frontier.length > 0 && this.flag == true){
@@ -232,7 +245,7 @@ class MAP{
       }
 
       //Se o atual for a comida
-      if(this.flag == false){//&& flag2 == true){
+      if(this.flag == false && this.flag2 == true){//&& flag2 == true){
           //Atualiza o status do atual como comida no array no mapa
           this.cordx = this.nodes[this.target][0];
           this.cordy = this.nodes[this.target][1];
@@ -263,6 +276,19 @@ class MAP{
               }
           }
 
+          //Analisando se todos os itens de PATH foram cetegorizados
+          //Se sim, inicia a caminhada do player ao objetivo
+          for(let i = 0; i < this.path.length; i++){
+            this.nodeaux = this.path[i][0];
+            this.cordx = this.nodes[this.nodeaux][0];
+            this.cordy = this.nodes[this.nodeaux][1];
+            if(this.array[this.cordx][this.cordy][1] == "path"){
+              this.flag2 = false;
+              
+            }else{
+              this.flag2 = true;
+            }
+          }
 
           //Atualizando o status dos elementos do caminho
           for(let i = 0; i < this.path.length; i++){
@@ -273,6 +299,56 @@ class MAP{
                   this.array[this.cordx][this.cordy][1] = "path";
               }
           }
+      }
+      //Inlui posição e peso da posição do player na lista path
+      if(this.flag == false && this.flag2 == false && this.flag3 == false){
+        this.cordx = this.nodes[this.source][0];
+        this.cordy = this.nodes[this.source][1];
+        if(this.array[this.cordx][this.cordy][0] < 0.3){
+          this.weight = 1;
+        }else if(this.array[this.cordx][this.cordy][0] < 0.4){
+          this.weight = 5;
+        }else{
+          this.weight = 10;
+        }
+        this.path.push([this.source, this.weight]);
+        this.flag3 = true;
+        this.timer = 0;
+      }
+      //Caminhada do player em diração a comida
+      if(this.flag3 == true && this.timer == 0){
+        this.timer = 1;
+        for(let i = 0; i < this.path.length; i++){
+          
+          if(i > 0){
+            this.nodeaux = this.path[i][0];
+            this.weight = this.path[i][1];
+            this.cordx = this.nodes[this.nodeaux][0];
+            this.cordy = this.nodes[this.nodeaux][1];
+            this.nodeaux2 = this.path[(i - 1)][0];
+            this.weight2 = this.path[(i - 1)][0];
+            this.cordx2 = this.nodes[this.nodeaux2][0];
+            this.cordy2 = this.nodes[this.nodeaux2][1];
+            
+            //Checamos se a posicao na lista path e o jogador
+            if( this.array[this.cordx][this.cordy][1] == "player"){
+              
+              //Modificando a velocidade de acordo com o terreno
+              if(this.path[i][1] == 1){
+                this.timer = 5;
+              }else if(this.path[i][1] == 5){
+                this.timer = 25;
+              }else{
+                this.timer = 50;
+              }
+              
+              
+              //Fazemos a mudança entre o jogador e o caminho
+              this.array[this.cordx][this.cordy][1] = "path";
+              this.array[this.cordx2][this.cordy2][1] = "player";
+            }
+          }
+        }
       }
     }
     
@@ -289,6 +365,7 @@ class MAP{
 
           if(this.current == this.target){
               this.flag = false;
+              this.flag2 = true;
           }
 
           if(this.frontier.length > 0 && this.flag == true){
@@ -323,7 +400,7 @@ class MAP{
       }
 
       //Se o atual for a comida
-      if(this.flag == false){//&& flag2 == true){
+      if(this.flag == false && this.flag2 == true){//&& flag2 == true){
           //Atualiza o status do atual como comida no array no mapa
           this.cordx = this.nodes[this.target][0];
           this.cordy = this.nodes[this.target][1];
@@ -354,6 +431,21 @@ class MAP{
               }
           }
 
+          //Analisando se todos os itens de PATH foram cetegorizados
+          //Se sim, inicia a caminhada do player ao objetivo
+          for(let i = 0; i < this.path.length; i++){
+            this.nodeaux = this.path[i][0];
+            this.cordx = this.nodes[this.nodeaux][0];
+            this.cordy = this.nodes[this.nodeaux][1];
+            if(this.array[this.cordx][this.cordy][1] == "path"){
+              this.flag2 = false;
+              
+            }else{
+              this.flag2 = true;
+            }
+          }
+        
+
 
           //Atualizando o status dos elementos do caminho
           for(let i = 0; i < this.path.length; i++){
@@ -365,7 +457,59 @@ class MAP{
               }
           }
       }
+
+      //Inlui posição e peso da posição do player na lista path
+      if(this.flag == false && this.flag2 == false && this.flag3 == false){
+        this.cordx = this.nodes[this.source][0];
+        this.cordy = this.nodes[this.source][1];
+        if(this.array[this.cordx][this.cordy][0] < 0.3){
+          this.weight = 1;
+        }else if(this.array[this.cordx][this.cordy][0] < 0.4){
+          this.weight = 5;
+        }else{
+          this.weight = 10;
+        }
+        this.path.push([this.source, this.weight]);
+        this.flag3 = true;
+        this.timer = 0;
+      }
       
+      //Caminhada do player em diração a comida
+      if(this.flag3 == true && this.timer == 0){
+        this.timer = 1;
+        for(let i = 0; i < this.path.length; i++){
+          
+          if(i > 0){
+            this.nodeaux = this.path[i][0];
+            this.weight = this.path[i][1];
+            this.cordx = this.nodes[this.nodeaux][0];
+            this.cordy = this.nodes[this.nodeaux][1];
+            this.nodeaux2 = this.path[(i - 1)][0];
+            this.weight2 = this.path[(i - 1)][0];
+            this.cordx2 = this.nodes[this.nodeaux2][0];
+            this.cordy2 = this.nodes[this.nodeaux2][1];
+            
+            //Checamos se a posicao na lista path e o jogador
+            if( this.array[this.cordx][this.cordy][1] == "player"){
+              
+              //Modificando a velocidade de acordo com o terreno
+              if(this.path[i][1] == 1){
+                this.timer = 5;
+              }else if(this.path[i][1] == 5){
+                this.timer = 25;
+              }else{
+                this.timer = 50;
+              }
+              
+              
+              //Fazemos a mudança entre o jogador e o caminho
+              this.array[this.cordx][this.cordy][1] = "path";
+              this.array[this.cordx2][this.cordy2][1] = "player";
+            }
+          }
+        }
+      }      
+
     }
 
     greedyBFS(){
@@ -488,7 +632,61 @@ class MAP{
         return d;
       }
     }
-  
+ 
+    
+    ucs() {
+      if (this.timer > 0) {
+
+        this.timer --;
+
+      }else if (this.timer == 0 && this.flag == true) {
+          
+          let idMinPath = 0;
+          for (let i = 0; i < this.leaves.length; i++) {
+              if (this.nodesAux[this.leaves[i]][0] < this.nodesAux[this.leaves[idMinPath]][0]) {
+                  idMinPath = i;
+              }
+          }
+
+          this.current = this.leaves.splice(idMinPath,1)[0]; // Retirando o minimo do vetor de folhas
+
+          if (this.current == this.target) {
+              this.flag = false;
+          }
+
+          if (this.flag) {
+
+            this.cordx = this.nodes[this.current][0];
+            this.cordy = this.nodes[this.current][1];
+            this.array[this.cordx][this.cordy][1] = 'visited';
+
+            for (let i = 0; i < this.width*this.height; i++) {
+                
+                if (this.matrix[this.current][i] < 50) {
+                  this.cordx = this.nodes[i][0];
+                  this.cordy = this.nodes[i][1];
+                  if(this.array[this.cordx][this.cordy][1] != 'visited'){
+                    append(this.leaves,i);
+                    this.array[this.cordx][this.cordy][1] = 'frontier'
+                    this.nodesAux[i][0] = this.nodesAux[this.current][0] + this.matrix[this.current][i]; //Atualizando o peso
+                    this.nodesAux[i][1] = this.current; // Atualizando o pai
+                  };
+                }
+            }
+        }
+      } 
+
+      if (this.flag == false) {
+          while(this.current != this.source){
+            this.current = this.nodesAux[this.current][1];
+            this.cordx = this.nodes[this.current][0];
+            this.cordy = this.nodes[this.current][1];
+            this.array[this.cordx][this.cordy][1] = 'path';
+          }
+      }
+    }
+    
+
     show(){
       for(let i = 0; i < this.width; i++){
         for(let j = 0; j < this.height; j++){
@@ -497,9 +695,23 @@ class MAP{
             //noStroke();
             rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
           }else if(this.array[i][j][1] == "path"){
-            fill("lime");
-            //noStroke();
-            rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);          
+            if(this.array[i][j][0] < 0.1){
+              fill("black");
+              //noStroke();
+              rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            }else if(this.array[i][j][0] < 0.30){
+              fill("rgb(3,198,3)");
+              //noStroke();
+              rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            }else if(this.array[i][j][0] < 0.40){
+              fill("rgb(201,59,59)");
+              //noStroke();
+              rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            }else{
+              fill("rgb(15,194,255)");
+              //noStroke();
+              rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            }       
           }else if(this.array[i][j][1] == "food"){
             fill("pink");
             //noStroke();
@@ -509,23 +721,40 @@ class MAP{
             //noStroke();
             rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
           }else if(this.array[i][j][1] == "visited"){
-            fill("purple");
+            if(this.array[i][j][0] < 0.1){
+              fill("black");
+              //noStroke();
+              rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            }else if(this.array[i][j][0] < 0.30){
+              fill("rgb(1,94,1)");
+              //noStroke();
+              rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            }else if(this.array[i][j][0] < 0.40){
+              fill("rgb(101,26,26)");
+              //noStroke();
+              rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            }else{
+              fill("rgb(4,4,126)");
+              //noStroke();
+              rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            }
+            //fill("purple");
             //noStroke();
-            rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
+            //rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
           }else if(this.array[i][j][0] < 0.1 && this.array[i][j][1] == "unvisited"){
-            fill("gray");
+            fill("black");
             //noStroke();
             rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
           }else if(this.array[i][j][0] < 0.30 && this.array[i][j][1] == "unvisited"){
-            fill("green");
+            fill("rgb(3,198,3)");
             //noStroke();
             rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
           }else if(this.array[i][j][0] < 0.40 && this.array[i][j][1] == "unvisited"){
-            fill("brown");
+            fill("rgb(201,59,59)");
             //noStroke();
             rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
           }else if (this.array[i][j][0] > 0.4 && this.array[i][j][1] == "unvisited"){
-            fill("blue");
+            fill("rgb(15,194,255)");
             //noStroke();
             rect(i*this.tileSize, j*this.tileSize, this.tileSize, this.tileSize);
           }

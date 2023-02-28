@@ -1,4 +1,5 @@
 let searchalg = 0;
+let frameCount = 1;
 
 let searchChoosed = false;
 
@@ -44,7 +45,6 @@ function startMenu(){
   ucsButton.mousePressed(setSearch);
   axsButton.mousePressed(setSearch);
   
-  
 }
 
 // function setAlgToBFS(){
@@ -80,13 +80,49 @@ function setSearch(){
     searchChoosed = true;
     
   } 
+
 }
+
+function deleteButtons(){
+  buttons = document.getElementsByTagName('button');
+  var nButtons = buttons.length;
+  for(let i = nButtons - 1; i >= 0; i--){
+    buttons[i].remove();
+  }
+}
+
+/*function setAlgToBFS(){
+  searchalg = 1;
+  deleteButtons();
+}
+function setAlgToDFS(){
+  searchalg = 2;
+  deleteButtons();
+}
+function setAlgToGS(){
+  searchalg = 3;
+  deleteButtons();
+}
+function setAlgToUCS(){
+  searchalg = 4;
+  deleteButtons();
+}
+function setAlgToAXS(){
+  searchalg = 5;
+  deleteButtons();
+}*/
 
 function draw() {
     
     switch(searchalg){
       case 0:
         startMenu();
+        if(frameCount%100==0){
+          frameCount = 1;
+          deleteButtons();
+        }else{
+          frameCount ++;
+        }
         break;
       case 1:
         map.bfs();
@@ -107,6 +143,4 @@ function draw() {
       default:
         break;
     }
-    //map.dfs();
-    //map.show();
 }
