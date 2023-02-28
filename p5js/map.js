@@ -79,6 +79,8 @@ class MAP{
         }
       }
       this.array[i][j][1] = "food";
+      this.foodX = i;
+      this.foodY = j;
     }
     
     node(){
@@ -480,7 +482,7 @@ class MAP{
       if(this.array[x][y][0] < 0.1){
         return 100;
       } else {
-        let d = sqrt( pow(x - this.foodX, 2) + pow(y - this.foodY, 2));
+        let d = abs(x - this.foodX) + abs(y - this.foodY);
         console.log(d);
         return d;
       }
