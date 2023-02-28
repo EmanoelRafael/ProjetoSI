@@ -667,6 +667,10 @@ class MAP{
 
           if (this.current == this.target) {
               this.flag = false;
+              this.cordx = this.nodes[this.current][0];
+              this.cordy = this.nodes[this.current][1];
+              if(this.array[this.cordx][this.cordy][1] != 'player')this.array[this.cordx][this.cordy][1] = 'food';
+              this.path.push(this.current);
           }
 
           if (this.flag) {
@@ -685,20 +689,57 @@ class MAP{
                     if(this.array[this.cordx][this.cordy][1] != 'player')this.array[this.cordx][this.cordy][1] = 'frontier'
                     this.nodesAux[i][0] = this.nodesAux[this.current][0] + this.matrix[this.current][i]; //Atualizando o peso
                     this.nodesAux[i][1] = this.current; // Atualizando o pai
-                  };
+                  }
                 }
             }
         }
       } 
 
       if (this.flag == false) {
-          while(this.current != this.source){
-            this.current = this.nodesAux[this.current][1];
-            this.cordx = this.nodes[this.current][0];
-            this.cordy = this.nodes[this.current][1];
-            if(this.array[this.cordx][this.cordy][1] != 'player')this.array[this.cordx][this.cordy][1] = 'path';
+        if(this.current != this.source && !this.flag2){
+          this.path.push(this.current);
+          this.current = this.nodesAux[this.current][1];
+          this.cordx = this.nodes[this.current][0];
+          this.cordy = this.nodes[this.current][1];
+          if(this.array[this.cordx][this.cordy][1] != 'player')this.array[this.cordx][this.cordy][1] = 'path';
+        }else{
+          if (this.current==this.source && !this.flag2) {
+            this.flag2 = true;
+            this.path = this.path.reverse();
+            this.playerX = this.nodes[this.source][0];
+            this.playerY = this.nodes[this.source][1];
+            this.count = 0;
+          }else if(!this.flag3&&this.count==0){
+            //Trocar player pelo proximo
+              if (this.current==this.target) {
+                this.flag3 = true;
+              }
+              this.array[this.playerX][this.playerY][1] = 'path';
+              this.playerX = this.nodes[this.current][0];
+              this.playerY = this.nodes[this.current][1];
+              this.array[this.playerX][this.playerY][1] = 'player';
+              this.nodeaux = this.path.splice(0,1);
+              //this.current = this.path.splice(0,1);
+
+              this.weight = this.matrix[this.current][this.nodeaux];
+
+              this.current = this.nodeaux;
+
+              if (this.weight == 1) {
+                this.count = 5;
+              }else if (this.weight == 5) {
+                this.count = 30;
+              }else if (this.weight == 10) {
+                this.count = 50;
+              }else{
+                this.count = 0;
+              }
+            
+          }else if(!this.flag3){
+            this.count--;
           }
-      }
+        }
+    }
     }
     
 
