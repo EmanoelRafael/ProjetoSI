@@ -483,7 +483,7 @@ class MAP{
         return 100;
       } else {
         let d = abs(x - this.foodX) + abs(y - this.foodY);
-        console.log(d);
+        // console.log(d);
         return d;
       }
     }
