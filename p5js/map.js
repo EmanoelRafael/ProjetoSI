@@ -395,6 +395,7 @@ class MAP{
             // this.greedyBFSStructure.path.push({...this.greedyBFSStructure.current});
             
             let current = this.greedyBFSStructure.current;
+            this.visited(current.x, current.y);
       
             let xLeft = current.x - 1;
             let xRight = current.x + 1;
@@ -406,7 +407,7 @@ class MAP{
             if(xLeft >= 0){
               if(this.array[xLeft][current.y][1] != "food"){
                 if(this.array[xLeft][current.y][1] != "visited" && this.array[xLeft][current.y][0] >= 0.1){
-                  this.visited(xLeft, current.y);
+                  this.fronteira(xLeft, current.y);
                   let son = {x: xLeft, y: current.y, cost: this.heuristic(xLeft, current.y), parent: current};
                   // console.log(son);
                   this.greedyBFSStructure.queue.push(son);
@@ -419,7 +420,7 @@ class MAP{
             if(xRight < this.width){
               if(this.array[xRight][current.y][1] != "food"){
                 if(this.array[xRight][current.y][1] != "visited" && this.array[xRight][current.y][0] >= 0.1){
-                  this.visited(xRight, current.y);
+                  this.fronteira(xRight, current.y);
                   let son = {x: xRight, y: current.y, cost: this.heuristic(xRight, current.y), parent: current};
                   // console.log(son);
                   this.greedyBFSStructure.queue.push(son);
@@ -432,7 +433,7 @@ class MAP{
             if(yUp >= 0){
               if(this.array[current.x][yUp][1] != "food"){
                 if(this.array[current.x][yUp][1] != "visited" && this.array[current.x][yUp][0] >= 0.1){
-                  this.visited(current.x, yUp);
+                  this.fronteira(current.x, yUp);
                   let son = {x: current.x, y: yUp, cost: this.heuristic(current.x, yUp), parent: current};
                   // console.log(son);
                   this.greedyBFSStructure.queue.push(son);
@@ -445,7 +446,7 @@ class MAP{
             if(yDown < this.height){
               if(this.array[current.x][yDown][1] != "food"){
                 if(this.array[current.x][yDown][1] != "visited" && this.array[current.x][yDown][0] >= 0.1){
-                  this.visited(current.x, yDown);
+                  this.fronteira(current.x, yDown);
                   let son = {x: current.x, y: yDown, cost: this.heuristic(current.x, yDown), parent: current};
                   // console.log(son);
                   this.greedyBFSStructure.queue.push(son);
@@ -538,6 +539,13 @@ class MAP{
         this.array[x][y][1] = "visited";
       }
     }
+
+    fronteira(x, y){
+      if(this.array[x][y][1] != "player"){
+        this.array[x][y][1] = "frontier";
+      }
+    }
+
   }
   
   
