@@ -533,13 +533,18 @@ class MAP{
             this.greedyBFSStructure.current = current.parent;
             this.greedyBFSStructure.path.push([current.x, current.y]);
           } else {
-            if(this.greedyBFSStructure.path.length > 0){
-              let [nextStepX, nextStepY] = this.greedyBFSStructure.path.pop()
-              console.log(nextStepX,nextStepY);
-              this.array[this.playerX][this.playerY][1] = 'path';
-              this.array[nextStepX][nextStepY][1] = 'player';
-              this.playerX = nextStepX;
-              this.playerY = nextStepY;
+            if(this.timer > 0){
+              this.timer--;
+            } else {
+              if(this.greedyBFSStructure.path.length > 0){
+                let [nextStepX, nextStepY] = this.greedyBFSStructure.path.pop()
+                console.log(nextStepX,nextStepY);
+                this.array[this.playerX][this.playerY][1] = 'path';
+                this.array[nextStepX][nextStepY][1] = 'player';
+                this.playerX = nextStepX;
+                this.playerY = nextStepY;
+                this.timer = this.costOf(this.playerX, this.playerY);
+              }
             }
           }
         } else {
@@ -620,7 +625,7 @@ class MAP{
     
 
     // heuristica: custo do terreno
-    heuristic(x,y){
+    costOf(x,y){
       if(this.array[x][y][0] < 0.1){
         return 100;
       } else if(this.array[x][y][0] < 0.3){
@@ -633,15 +638,15 @@ class MAP{
     }
 
     // heuristica: distância em linha reta entre o player e a comida
-    // heuristic(x, y) {
-    //   if(this.array[x][y][0] < 0.1){
-    //     return 100;
-    //   } else {
-    //     let d = abs(x - this.foodX) + abs(y - this.foodY);
-    //     // console.log(d);
-    //     return d;
-    //   }
-    // }
+    heuristic(x, y) {
+      if(this.array[x][y][0] < 0.1){
+        return 100;
+      } else {
+        let d = abs(x - this.foodX) + abs(y - this.foodY);
+        // console.log(d);
+        return d;
+      }
+    }
  
     
     ucs() {
