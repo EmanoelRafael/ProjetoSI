@@ -665,7 +665,7 @@ class MAP{
                 if (this.matrix[this.current][i] < 50) {
                   this.cordx = this.nodes[i][0];
                   this.cordy = this.nodes[i][1];
-                  if(this.array[this.cordx][this.cordy][1] != 'visited'){
+                  if(this.array[this.cordx][this.cordy][1] != 'visited' && this.array[this.cordx][this.cordy][1] != 'player'){
                     append(this.leaves,i);
                     this.array[this.cordx][this.cordy][1] = 'frontier'
                     this.nodesAux[i][0] = this.nodesAux[this.current][0] + this.matrix[this.current][i]; //Atualizando o peso
