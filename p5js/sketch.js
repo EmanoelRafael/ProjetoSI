@@ -97,6 +97,8 @@ function draw() {
         map.show();
         break;
       case 3:
+        map.greedyBFS();
+        map.show();
         break;
       case 4:
         break;
