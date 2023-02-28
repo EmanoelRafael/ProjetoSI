@@ -349,6 +349,7 @@ class MAP{
 
           if(this.current == this.target){
               this.flag = false;
+              this.flag2 = true;
           }
 
           if(this.frontier.length > 0 && this.flag == true){
@@ -383,7 +384,7 @@ class MAP{
       }
 
       //Se o atual for a comida
-      if(this.flag == false){//&& flag2 == true){
+      if(this.flag == false && this.flag2 == true){//&& flag2 == true){
           //Atualiza o status do atual como comida no array no mapa
           this.cordx = this.nodes[this.target][0];
           this.cordy = this.nodes[this.target][1];
@@ -414,6 +415,21 @@ class MAP{
               }
           }
 
+          //Analisando se todos os itens de PATH foram cetegorizados
+          //Se sim, inicia a caminhada do player ao objetivo
+          for(let i = 0; i < this.path.length; i++){
+            this.nodeaux = this.path[i][0];
+            this.cordx = this.nodes[this.nodeaux][0];
+            this.cordy = this.nodes[this.nodeaux][1];
+            if(this.array[this.cordx][this.cordy][1] == "path"){
+              this.flag2 = false;
+              
+            }else{
+              this.flag2 = true;
+            }
+          }
+        
+
 
           //Atualizando o status dos elementos do caminho
           for(let i = 0; i < this.path.length; i++){
@@ -425,7 +441,59 @@ class MAP{
               }
           }
       }
+
+      //Inlui posição e peso da posição do player na lista path
+      if(this.flag == false && this.flag2 == false && this.flag3 == false){
+        this.cordx = this.nodes[this.source][0];
+        this.cordy = this.nodes[this.source][1];
+        if(this.array[this.cordx][this.cordy][0] < 0.3){
+          this.weight = 1;
+        }else if(this.array[this.cordx][this.cordy][0] < 0.4){
+          this.weight = 5;
+        }else{
+          this.weight = 10;
+        }
+        this.path.push([this.source, this.weight]);
+        this.flag3 = true;
+        this.timer = 0;
+      }
       
+      //Caminhada do player em diração a comida
+      if(this.flag3 == true && this.timer == 0){
+        this.timer = 1;
+        for(let i = 0; i < this.path.length; i++){
+          
+          if(i > 0){
+            this.nodeaux = this.path[i][0];
+            this.weight = this.path[i][1];
+            this.cordx = this.nodes[this.nodeaux][0];
+            this.cordy = this.nodes[this.nodeaux][1];
+            this.nodeaux2 = this.path[(i - 1)][0];
+            this.weight2 = this.path[(i - 1)][0];
+            this.cordx2 = this.nodes[this.nodeaux2][0];
+            this.cordy2 = this.nodes[this.nodeaux2][1];
+            
+            //Checamos se a posicao na lista path e o jogador
+            if( this.array[this.cordx][this.cordy][1] == "player"){
+              
+              //Modificando a velocidade de acordo com o terreno
+              if(this.path[i][1] == 1){
+                this.timer = 5;
+              }else if(this.path[i][1] == 5){
+                this.timer = 25;
+              }else{
+                this.timer = 50;
+              }
+              
+              
+              //Fazemos a mudança entre o jogador e o caminho
+              this.array[this.cordx][this.cordy][1] = "path";
+              this.array[this.cordx2][this.cordy2][1] = "player";
+            }
+          }
+        }
+      }      
+
     }
     
     ucs() {
